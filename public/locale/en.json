@@ -69,5 +69,8 @@
   "radiology_created_by":"Created By",
   "radiology_last_modified_by":"Last Modified By",
   "radiology_modification_history":"Modification History",
-  "radiology_no_history_available":"No history available"
+  "radiology_no_history_available":"No history available",
+  "radiology_mpps_status_inprogress": "Scan in progress",
+  "radiology_mpps_status_completed": "Processing images",
+  "radiology_mpps_status_discontinued": "Scan discontinued"
 }

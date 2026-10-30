@@ -11,6 +11,7 @@ import { Card, CardContent } from "./ui/card";
 import RadiologyStudyTable from "./RadiologyStudyTable";
 import { DicomStudy } from "@/types/Dicom";
 import { PLUGIN_SLUG } from "@/constants";
+import { PENDING_STUDY_REFETCH_INTERVAL } from "@/lib/constants";
 
 export const RadiologyEncounterTab: FC<EncounterTabProps> = ({
   patient,
@@ -30,6 +31,10 @@ export const RadiologyEncounterTab: FC<EncounterTabProps> = ({
         patient: patient.id,
       }),
     enabled: true,
+    refetchInterval: (query) =>
+      query.state.data?.some((s) => s.is_pending)
+        ? PENDING_STUDY_REFETCH_INTERVAL
+        : false,
   });
 
   const filteredStudies = dicomStudies?.filter((s: DicomStudy) => {

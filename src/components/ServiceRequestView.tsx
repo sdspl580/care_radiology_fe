@@ -6,6 +6,7 @@ import React from "react";
 import RadiologyStudyTable from "./RadiologyStudyTable";
 import { Card, CardContent } from "./ui/card";
 import { Label } from "@radix-ui/react-label";
+import { PENDING_STUDY_REFETCH_INTERVAL } from "@/lib/constants";
 
 type SRProps = {
   serviceRequestId: string;
@@ -18,6 +19,10 @@ export const ServiceRequestView: FC<SRProps> = ({ serviceRequestId }) => {
         serviceRequestId,
       }),
     enabled: true,
+    refetchInterval: (query) =>
+      query.state.data?.some((s) => s.is_pending)
+        ? PENDING_STUDY_REFETCH_INTERVAL
+        : false,
   });
   return (
     <React.Fragment>

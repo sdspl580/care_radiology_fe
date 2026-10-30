@@ -12,9 +12,13 @@ import { navigate } from "raviger";
 import { Eye, FileText, Info, X, Pencil } from "lucide-react";
 import { format } from "date-fns";
 import React from "react";
+import { useTranslation } from "react-i18next";
+import { Badge } from "./ui/badge";
+import { PLUGIN_SLUG } from "@/constants";
 
 type RadiologyStudyTableProps = { className?: string, studies: DicomStudy[] };
 export const RadiologyStudyTable: FC<RadiologyStudyTableProps> = (props) => {
+  const { t } = useTranslation(PLUGIN_SLUG);
   const [showModal, setShowModal] = useState(false);
   const [selectedStudy, setSelectedStudy] = useState<DicomStudy | null>(null);
   const handleInfoClick = async (study: DicomStudy) => {
@@ -45,7 +49,7 @@ export const RadiologyStudyTable: FC<RadiologyStudyTableProps> = (props) => {
           </TableHeader>
           <TableBody>
             {props.studies.map((study: DicomStudy) => (
-              <TableRow>
+              <TableRow key={study.external_id}>
                 <TableCell>{study.study_description || "—"}</TableCell>
                 <TableCell>
                   {(study.study_date
@@ -57,8 +61,16 @@ export const RadiologyStudyTable: FC<RadiologyStudyTableProps> = (props) => {
                 </TableCell>
                 <TableCell>
                   <div className="flex gap-3 items-center justify-end">
-                    {study.has_report && 
-                      <button
+                    {study.is_pending ? (
+                      <Badge variant="secondary">
+                        {t(`radiology_mpps_status_${study.mpps_status}`, {
+                          defaultValue: study.mpps_status,
+                        })}
+                      </Badge>
+                    ) : (
+                      <>
+                        {study.has_report &&
+                          <button
                             onClick={() =>
                               window.open(
                                 `/radiology/report/${study.external_id}/preview`,
@@ -67,35 +79,37 @@ export const RadiologyStudyTable: FC<RadiologyStudyTableProps> = (props) => {
                             }
                             className="text-gray-600 hover:text-orange-600"
                             title="View Report"
-                      >
+                          >
                             <FileText size={18} />
-                      </button>
-                    }             
-                    <button
-                      onClick={() =>
-                        navigate(`/radiology/view/${study.study_uid}`)
-                      }
-                      className="text-gray-600 hover:text-blue-600"
-                      title="View Study"
-                    >
-                      <Eye size={18} />
-                    </button>
-                    <button
-                      onClick={() => handleInfoClick(study)}
-                      className="text-gray-600 hover:text-green-600"
-                      title="Study Info"
-                    >
-                      <Info size={18} />
-                    </button>
-                    <button
+                          </button>
+                        }
+                        <button
+                          onClick={() =>
+                            navigate(`/radiology/view/${study.study_uid}`)
+                          }
+                          className="text-gray-600 hover:text-blue-600"
+                          title="View Study"
+                        >
+                          <Eye size={18} />
+                        </button>
+                        <button
+                          onClick={() => handleInfoClick(study)}
+                          className="text-gray-600 hover:text-green-600"
+                          title="Study Info"
+                        >
+                          <Info size={18} />
+                        </button>
+                        <button
                           onClick={() =>
                             navigate(`/radiology/report/${study.external_id}`)
                           }
                           className="text-gray-600 hover:text-purple-600"
                           title="Edit Report"
-                    >
+                        >
                           <Pencil size={18} />
-                    </button>
+                        </button>
+                      </>
+                    )}
                   </div>
                 </TableCell>
               </TableRow>
